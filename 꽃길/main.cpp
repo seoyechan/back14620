@@ -32,6 +32,7 @@ int visit_check(int posx, int posy, int flag)
 			}
 		}
 	}
+	int cur_money = nfiled[posy][posx];
 
 	nvisit[posy][posx] = flag; // ¾¾¾Ñ Ç¥½Ã
 	for (int i = 0; i < 4; i++)
@@ -40,24 +41,18 @@ int visit_check(int posx, int posy, int flag)
 		next_posy = posy + diry[i];
 
 		nvisit[next_posy][next_posx] = flag;
+		cur_money += nfiled[next_posy][next_posx];
 	}
-	return 1;
+	return cur_money;
 }
 
 
 
-void dfs(int x, int y, int cnt)
+void dfs(int x, int y, int cnt, int money)
 {
 	if (cnt == 3)
 	{
-		int cur_money = 0;
-		for (int i = 0; i < n; i++){
-			for (int j = 0; j < n; j++){
-				if (nvisit[i][j])
-					cur_money += nfiled[i][j];
-			}
-		}
-		nRet = min(nRet, cur_money);
+		nRet = min(nRet, money);
 		return;
 	}
 
@@ -66,12 +61,13 @@ void dfs(int x, int y, int cnt)
 			
 			check = visit_check(j, i, 1);
 
-			if (check == 1)
+			if (check != -1)
 			{
+				check += money;
 				if (j == n - 2)
-					dfs(1, i + 1, cnt + 1);
+					dfs(1, i + 1, cnt + 1, check);
 				else
-					dfs(j + 1, i, cnt + 1);
+					dfs(j + 1, i, cnt + 1, check);
 
 				visit_check(j, i, 0);
 			}
@@ -91,7 +87,7 @@ int main()
 		}
 	}
 	nRet = 987654321;
-	dfs(1, 1, 0);
+	dfs(1, 1, 0, 0);
 
 	printf("%d\n", nRet);
 
